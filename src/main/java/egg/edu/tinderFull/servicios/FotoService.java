@@ -44,10 +44,9 @@ public class FotoService {
 
                 //Seteamos el contenido de la foto obteniendo los bytes del archivo
                 foto.setContenido(archivo.getBytes());
-
+                
                 //Persistimos y devolvemos la Foto creada
                 return fotoRepositorio.save(foto);
-
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }

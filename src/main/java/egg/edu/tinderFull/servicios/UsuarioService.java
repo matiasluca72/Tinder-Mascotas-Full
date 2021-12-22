@@ -212,6 +212,8 @@ public class UsuarioService implements UserDetailsService {
             throw new UsuarioServiceException("El email del usuario no puede ser nulo.");
         } else if (!email.contains("@")) {
             throw new UsuarioServiceException("El email del usuario no es válido.");
+        } else if (usuarioRepositorio.buscarPorMail(email) != null) {
+            throw new UsuarioServiceException("El mail ya está en uso.");
         }
 
         if (clave1 == null || clave1.isEmpty()) {

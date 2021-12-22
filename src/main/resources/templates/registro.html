@@ -15,7 +15,8 @@
 
   <!-- Custom fonts for this template -->
   <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
+    rel="stylesheet">
 
   <!-- Custom styles for this template -->
   <link href="css/one-page-wonder.min.css" rel="stylesheet">
@@ -28,7 +29,8 @@
   <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
     <div class="container">
       <a class="navbar-brand" href="/">Tinder de Mascota</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
@@ -70,36 +72,36 @@
           <div class="p-5">
             <h2 class="display-4">Registrate</h2>
             <form action="/registrar" method="POST" enctype="multipart/form-data">
-              
+
               <!-- Este p utiliza una etiqueta de Thymeleaf que preguntará si la variable 'error' no se encuentra null.
               Si contiene algún valor, lo introduce dentro de la etiqueta <p> y le aplica el style in-line -->
-              <p th:if="${error != null}" th:text="${error}" style="color:red;"></p> 
-                
+              <p th:if="${error != null}" th:text="${error}" style="color:red;"></p>
+
               <label>Nombre</label>
-              <input type="text" class="form-control" name="nombre" th:value="${nombre}"/>
+              <input type="text" class="form-control" name="nombre" th:value="${nombre}" />
 
               <label>Apellido</label>
-              <input type="text" class="form-control" name="apellido" th:value="${apellido}"/>
-              
+              <input type="text" class="form-control" name="apellido" th:value="${apellido}" />
+
               <label>E-Mail</label>
-              <input type="email" class="form-control" name="email" th:value="${email}"/>
-                     
+              <input type="email" class="form-control" name="email" th:value="${email}" />
+
               <label>Foto</label>
-              <input type="file" class="form-control" name="archivo"/>
-              
+              <input type="file" class="form-control" name="archivo" />
+
               <label>Zona</label>
-              <select class="form-control" name="idZona"> 
-                   <option th:each="zona : ${zonas}" th:value="${zona.id}" th:text="${zona.nombre}"></option> 
+              <select class="form-control" name="idZona">
+                <option th:each="zona : ${zonas}" th:value="${zona.id}" th:text="${zona.nombre}"></option>
               </select>
-              
-              
+
+
               <label>Clave</label>
-              <input type="password" class="form-control" name="clave1" th:value="${clave1}"/>
-              
+              <input type="password" class="form-control" name="clave1" th:value="${clave1}" />
+
               <label>Repetir Clave</label>
-              <input type="password" class="form-control" name="clave2" th:value="${clave2}"/>
-              
-              <br/><button type="submit" class="btn btn-primary">Registrarme</button>
+              <input type="password" class="form-control" name="clave2" th:value="${clave2}" />
+
+              <br /><button type="submit" class="btn btn-primary">Registrarme</button>
             </form>
           </div>
         </div>

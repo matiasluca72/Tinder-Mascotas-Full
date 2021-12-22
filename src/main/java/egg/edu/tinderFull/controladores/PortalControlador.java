@@ -2,8 +2,8 @@ package egg.edu.tinderFull.controladores;
 
 import egg.edu.tinderFull.entidades.Zona;
 import egg.edu.tinderFull.excepciones.UsuarioServiceException;
-import egg.edu.tinderFull.repositorios.ZonaRepositorio;
 import egg.edu.tinderFull.servicios.UsuarioService;
+import egg.edu.tinderFull.servicios.ZonaService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,9 +23,9 @@ public class PortalControlador {
     @Autowired
     private UsuarioService usuarioService;
 
-    //ATRIBUTO - Repositorio de Zonas (podria configurarse para que sea el Service?)
+    //ATRIBUTO - Service de Zonas
     @Autowired
-    private ZonaRepositorio zonaRepositorio;
+    private ZonaService zonaService;
 
     //Método que devolverá el index.html cuando se ingrese a la url raíz de la aplicación
     @GetMapping("/")
@@ -52,7 +52,8 @@ public class PortalControlador {
      * @return 
      */
     @GetMapping("/login")
-    public String login(@RequestParam(required = false) String error, @RequestParam(required = false) String logout, ModelMap model) {
+    public String login(@RequestParam(required = false) String error, 
+            @RequestParam(required = false) String logout, ModelMap model) {
         
         //Si el parámetro error existe en la url, inyectamos el siguiente mensaje en el ModelMap
         if (error != null) {
@@ -71,7 +72,7 @@ public class PortalControlador {
     public String registro(ModelMap modelo) {
 
         //Nos traemos todas las zonas de la base de datos
-        List<Zona> zonas = zonaRepositorio.findAll();
+        List<Zona> zonas = zonaService.listarZonas();
 
         //Inyectamos en el ModelMap el listado con el key 'zonas'
         modelo.put("zonas", zonas);
@@ -82,7 +83,10 @@ public class PortalControlador {
 
     //Método que responderá a una petición POST solicitada en la url raíz/registrar y recibirá una serie de argumentos
     @PostMapping("/registrar")
-    public String registrar(ModelMap modelo, MultipartFile archivo, @RequestParam String nombre, @RequestParam String apellido, @RequestParam String email, @RequestParam String clave1, @RequestParam String clave2, @RequestParam String idZona) {
+    public String registrar(ModelMap modelo, MultipartFile archivo,
+            @RequestParam String nombre, @RequestParam String apellido,
+            @RequestParam String email, @RequestParam String clave1,
+            @RequestParam String clave2, @RequestParam String idZona) {
 
         //Llamamos al método registrar de UsuarioService y le pasamos los parámetros recibidos por el controlador
         try {
@@ -100,7 +104,7 @@ public class PortalControlador {
             modelo.put("clave2", clave2);
 
             //Nos traemos todas las zonas de la base de datos
-            List<Zona> zonas = zonaRepositorio.findAll();
+            List<Zona> zonas = zonaService.listarZonas();
             //Inyectamos en el ModelMap el listado con el key 'zonas'
             modelo.put("zonas", zonas);
 
