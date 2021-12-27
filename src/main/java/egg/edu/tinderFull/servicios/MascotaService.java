@@ -4,6 +4,7 @@ import egg.edu.tinderFull.entidades.Foto;
 import egg.edu.tinderFull.entidades.Mascota;
 import egg.edu.tinderFull.entidades.Usuario;
 import egg.edu.tinderFull.enumeraciones.Sexo;
+import egg.edu.tinderFull.enumeraciones.Tipo;
 import egg.edu.tinderFull.excepciones.MascotaServiceException;
 import egg.edu.tinderFull.repositorios.MascotaRepositorio;
 import egg.edu.tinderFull.repositorios.UsuarioRepositorio;
@@ -26,13 +27,14 @@ public class MascotaService {
     private UsuarioRepositorio usuarioRepositorio;
     @Autowired
     private MascotaRepositorio mascotaRepositorio;
-    
+
     //ATRIBUTO FOTO SERVICE
+    @Autowired
     private FotoService fotoService;
 
     //Método para agregar una Mascota
     @Transactional
-    public void agregarMascota(MultipartFile archivo, String idUsuario, String nombre, Sexo sexo) throws MascotaServiceException {
+    public void agregarMascota(MultipartFile archivo, String idUsuario, String nombre, Sexo sexo, Tipo tipo) throws MascotaServiceException {
 
         //Traemos al Usuario de la base de datos buscandolo por su Id
         Usuario usuario = usuarioRepositorio.findById(idUsuario).get();
@@ -44,8 +46,10 @@ public class MascotaService {
         Mascota mascota = new Mascota();
         mascota.setNombre(nombre);
         mascota.setSexo(sexo);
+        mascota.setTipo(tipo);
         mascota.setAlta(new Date());
-        
+        mascota.setUsuario(usuario);
+
         //Persistimos la foto y la creamos usando el método de FotoService
         Foto foto = fotoService.guardar(archivo);
         mascota.setFoto(foto); //Seteamos el Objeto Foto en el Objeto Mascota
@@ -56,7 +60,7 @@ public class MascotaService {
 
     //Modificar una Mascota existente en la base de datos
     @Transactional
-    public void modificarMascota(MultipartFile archivo, String idUsuario, String idMascota, String nombre, Sexo sexo) throws MascotaServiceException {
+    public Mascota modificarMascota(MultipartFile archivo, String idUsuario, String idMascota, String nombre, Sexo sexo, Tipo tipo) throws MascotaServiceException {
 
         //Validación de los parámetros recibidos
         validar(nombre, sexo);
@@ -71,7 +75,8 @@ public class MascotaService {
             if (mascota.getUsuario().getId().equals(idUsuario)) {
                 mascota.setNombre(nombre);
                 mascota.setSexo(sexo);
-                
+                mascota.setTipo(tipo);
+
                 //Verificamos si la Mascota ya tenia una foto seteada en sus atributos
                 String idFoto = null;
                 if (mascota.getFoto() != null) {
@@ -80,8 +85,8 @@ public class MascotaService {
                 //Llamamos al método de Foto Service y le seteamos a la Mascota el resultado del método actualizar()
                 Foto foto = fotoService.actualizar(idFoto, archivo);
                 mascota.setFoto(foto);
-                
-                mascotaRepositorio.save(mascota);
+
+                return mascotaRepositorio.save(mascota);
             } else {
                 throw new MascotaServiceException("No tiene permisos suficientes para realizar la operación.");
             }
@@ -113,6 +118,23 @@ public class MascotaService {
         } else {
             throw new MascotaServiceException("No existe una mascota con el identificador solicitado.");
         }
+    }
+
+    /**
+     * Buscar una Mascota en la DB según su ID
+     *
+     * @param id
+     * @return
+     */
+    public Mascota buscarPorId(String id) throws MascotaServiceException {
+
+        Optional<Mascota> resultado = mascotaRepositorio.findById(id);
+        if (resultado.isPresent()) {
+            return resultado.get();
+        } else {
+            throw new MascotaServiceException("La Mascota indicada no ha sido encontrada.");
+        }
+
     }
 
     //Método para validar los atributos de una Mascota

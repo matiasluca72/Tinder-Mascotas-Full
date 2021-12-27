@@ -30,7 +30,7 @@ public class FotoService {
     public Foto guardar(MultipartFile archivo) {
 
         //Verificación de que el archivo no esté nulo. Si lo está, se devuelve null
-        if (archivo != null) {
+        if (archivo != null && !archivo.isEmpty()) {
 
             try {
                 //Creamos el Objeto Foto
@@ -44,43 +44,44 @@ public class FotoService {
 
                 //Seteamos el contenido de la foto obteniendo los bytes del archivo
                 foto.setContenido(archivo.getBytes());
-                
+
                 //Persistimos y devolvemos la Foto creada
                 return fotoRepositorio.save(foto);
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
         }
-        
+
         //Si la foto está null o salta un error, se retorna null
         return null;
     }
-    
+
     /**
      * Actualizar la foto de la Mascota de un Usuario
+     *
      * @param idFoto De la foto anterior a reemplazar
      * @param archivo Nueva foto a actualizar
      * @return Foto actualizada
      */
     @Transactional
     public Foto actualizar(String idFoto, MultipartFile archivo) {
-        
-        if (archivo != null) {
+
+        if (archivo != null && !archivo.isEmpty()) {
             try {
                 Foto foto = new Foto();
 
                 //Si el Id de la foto anterior no es nulo, lo busco en el repo
                 if (idFoto != null) {
-                    
+
                     //Buscamos la foto en la base de datos
                     Optional<Foto> respuesta = fotoRepositorio.findById(idFoto);
-                    
+
                     //Si encontré la foto, la traigo y la piso con los atributos nuevos
                     if (respuesta.isPresent()) {
                         foto = respuesta.get();
                     }
                 }
-                
+
                 foto.setMime(archivo.getContentType());
                 foto.setNombre(archivo.getName());
                 foto.setContenido(archivo.getBytes());
@@ -88,8 +89,17 @@ public class FotoService {
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
+            
+        } else if (idFoto != null) {
+            
+            // Si la foto nueva está vacía, buscamos si ya tenía una setteada para no eliminar la existente
+            Optional<Foto> respuesta = fotoRepositorio.findById(idFoto);
+            if (respuesta.isPresent()) {
+                return respuesta.get();
+            }
         }
-        //Si la foto está null o salta un error, se retorna null
+
+        //Si la foto y el idFoto están null o salta un error, se retorna null
         return null;
     }
 }

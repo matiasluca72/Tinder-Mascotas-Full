@@ -64,7 +64,7 @@ public class UsuarioService implements UserDetailsService {
     public void registrar(MultipartFile archivo, String nombre, String apellido, String email, String clave1, String clave2, String idZona) throws UsuarioServiceException {
 
         //Validación de los parámetros
-        validar(nombre, apellido, email, clave1, clave2, idZona);
+        validar(nombre, apellido, email, clave1, clave2, idZona, true);
 
         //Creamos el Objeto Usuario
         Usuario usuario = new Usuario();
@@ -105,7 +105,9 @@ public class UsuarioService implements UserDetailsService {
         // Usuario usuario = usuarioRepositorio.findById(id).get();
         //
         //Validación de los parámetros
-        validar(nombre, apellido, email, clave1, clave2, idZona);
+        validar(nombre, apellido, email, clave1, clave2, idZona, false);
+        //Validación del mail
+        validarMail(id, email);
 
         //Validamos que se encuentre un Usuario con el Id recibido
         Optional<Usuario> respuesta = usuarioRepositorio.findById(id);
@@ -195,9 +197,13 @@ public class UsuarioService implements UserDetailsService {
             throw new UsuarioServiceException("No se encontró el usuario solicitado.");
         }
     }
+    
+    public Usuario buscarPorId(String id) {
+        return usuarioRepositorio.getById(id);
+    }
 
     //Método para delegar la tarea de validar los parámetros
-    private void validar(String nombre, String apellido, String email, String clave1, String clave2, String idZona) throws UsuarioServiceException {
+    private void validar(String nombre, String apellido, String email, String clave1, String clave2, String idZona, boolean newUser) throws UsuarioServiceException {
 
         //Validaciones de los argumentos
         if (nombre == null || nombre.isEmpty()) {
@@ -212,7 +218,7 @@ public class UsuarioService implements UserDetailsService {
             throw new UsuarioServiceException("El email del usuario no puede ser nulo.");
         } else if (!email.contains("@")) {
             throw new UsuarioServiceException("El email del usuario no es válido.");
-        } else if (usuarioRepositorio.buscarPorMail(email) != null) {
+        } else if (usuarioRepositorio.buscarPorMail(email) != null && newUser) {
             throw new UsuarioServiceException("El mail ya está en uso.");
         }
 
@@ -231,6 +237,19 @@ public class UsuarioService implements UserDetailsService {
         Optional<Zona> respuesta = zonaRepositorio.findById(idZona);
         if (!respuesta.isPresent()) {
             throw new UsuarioServiceException("La zona indicada no es válida.");
+        }
+    }
+    
+    /**
+     * Validamos que el nuevo mail ingresado de un usuario ya registrado sea nuevo o no pertenezca a otro usuario
+     * @param id
+     * @param email
+     * @throws UsuarioServiceException 
+     */
+    private void validarMail(String id, String email) throws UsuarioServiceException {
+        Usuario newUser = usuarioRepositorio.buscarPorMail(email);
+        if (newUser != null && !id.equals(newUser.getId())) {
+            throw new UsuarioServiceException("El nuevo mail ya está en uso.");
         }
     }
 
@@ -274,5 +293,6 @@ public class UsuarioService implements UserDetailsService {
             return null;
         }
     }
+
 
 }

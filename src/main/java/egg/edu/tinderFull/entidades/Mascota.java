@@ -1,6 +1,7 @@
 package egg.edu.tinderFull.entidades;
 
 import egg.edu.tinderFull.enumeraciones.Sexo;
+import egg.edu.tinderFull.enumeraciones.Tipo;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -33,6 +34,9 @@ public class Mascota {
     //Uso de un Enum
     @Enumerated(EnumType.STRING)
     private Sexo sexo;
+    
+    @Enumerated(EnumType.STRING)
+    private Tipo tipo;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date alta;
@@ -125,6 +129,14 @@ public class Mascota {
      */
     public void setSexo(Sexo sexo) {
         this.sexo = sexo;
+    }
+    
+    public Tipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
     }
 
     /**
