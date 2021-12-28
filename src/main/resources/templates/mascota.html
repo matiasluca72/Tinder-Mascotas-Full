@@ -46,7 +46,9 @@
   <header class="masthead text-center text-white">
     <div class="masthead-content">
       <div class="container">
-          <h1 class="masthead-heading mb-0"><span th:text="${perfil.id == null ? 'Crear' : 'Actualizar'}"></span> Mascota</h1>
+        <h1 class="masthead-heading mb-0">
+          <span th:text="${action}"></span> Mascota
+        </h1>
       </div>
     </div>
     <div class="bg-circle-1 bg-circle"></div>
@@ -61,15 +63,18 @@
         <div class="col-lg-6 order-lg-2">
           <div class="p-5">
             <!-- Muestro la imagen que me devuelve FotoController según id del usuario logueado -->
-            <img th:if="${perfil.foto != null}" th:src="@{/foto/mascota/__${perfil.id}__}" class="img-fluid rounded-circle">
+            <img th:if="${perfil.foto != null}" th:src="@{/foto/mascota/__${perfil.id}__}"
+              class="img-fluid rounded-circle">
             <img th:unless="${perfil.foto != null}" src="/img/m1.jpeg" class="img-fluid rounded-circle">
           </div>
         </div>
         <div class="col-lg-6 order-lg-1">
           <div class="p-5">
-              <h2 class="display-4"><span th:text="${perfil.id == null? 'Ingresa tu nueva' : 'Actualiza los datos de tu '}"></span> Mascota</h2>
+            <h2 class="display-4">
+              <span th:text="${perfil.id == null? 'Ingresa tu nueva' : 'Actualiza los datos de tu '}"></span> Mascota
+            </h2>
             <!-- Action actualizado para apuntar al controlador de actualizar perfil -->
-            <form action="/mascota/actualizar-perfil" method="POST" enctype="multipart/form-data">
+            <form enctype="multipart/form-data">
 
               <!-- Este p utiliza una etiqueta de Thymeleaf que preguntará si la variable 'error' no se encuentra null.
               Si contiene algún valor, lo introduce dentro de la etiqueta <p> y le aplica el style in-line -->
@@ -80,26 +85,39 @@
 
               <!-- Atributos del formulario pre-cargados con los datos del Objeto inyecado 'perfil' -->
               <label>Nuevo Nombre</label>
-              <input type="text" class="form-control" name="nombre" th:value="${perfil.nombre}" />
-              
+              <input type="text" class="form-control" name="nombre" th:value="${perfil.nombre}"
+                th:disabled="${action == 'Eliminar'}" />
+
               <label>Tipo de Mascota</label>
-              <select class="form-control" name="tipo">
+              <select class="form-control" name="tipo" th:disabled="${action == 'Eliminar'}">
                 <!-- Uso de th:selected="${variable o condición}" para prefijar el valor actual de la Zona -->
                 <option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo}"
                   th:selected="${tipo==perfil.tipo}"></option>
               </select>
-              
+
               <label>Sexo</label>
-              <select class="form-control" name="sexo">
+              <select class="form-control" name="sexo" th:disabled="${action == 'Eliminar'}">
                 <!-- Uso de th:selected="${variable o condición}" para prefijar el valor actual de la Zona -->
                 <option th:each="sexo : ${sexos}" th:value="${sexo}" th:text="${sexo}"
                   th:selected="${sexo==perfil.sexo}"></option>
               </select>
 
-              <label>Nueva Foto</label>
-              <input type="file" class="form-control" name="archivo" />
+              <div th:if="${action != 'Eliminar'}">
+                <label>Nueva Foto</label>
+                <input type="file" class="form-control" name="archivo" />
+              </div>
 
-              <br /><button type="submit" class="btn btn-primary">Actualizar Mascota</button>
+              <br />
+              <!-- Diferentes botones según la opcion a realizar -->
+              <button th:if="${action == 'Crear'}" formaction="/mascota/actualizar-perfil" formmethod="POST"
+                type="submit" class="btn btn-primary">Crear Mascota</button>
+              <button th:if="${action == 'Actualizar'}" formaction="/mascota/actualizar-perfil" formmethod="POST"
+                type="submit" class="btn btn-primary">Actualizar Mascota</button>
+              <button th:if="${action == 'Eliminar'}" formaction="/mascota/eliminar-perfil/" formmethod="POST"
+                type="submit" class="btn btn-danger">Eliminar Mascota</button>
+              <!-- Botón de volver al Listado de Mascotas -->
+              <button formaction="/mascota/mis-mascotas" formmethod="GET" type="submit"
+                class="btn btn-dark">Volver</button>
             </form>
           </div>
         </div>

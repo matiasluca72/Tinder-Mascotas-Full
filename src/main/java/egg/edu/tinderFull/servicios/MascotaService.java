@@ -9,6 +9,7 @@ import egg.edu.tinderFull.excepciones.MascotaServiceException;
 import egg.edu.tinderFull.repositorios.MascotaRepositorio;
 import egg.edu.tinderFull.repositorios.UsuarioRepositorio;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -136,6 +137,15 @@ public class MascotaService {
         }
 
     }
+    
+    /**
+     * Devuelve una Lista de Mascotas según un Usuario mandando su id como parámetro
+     * @param id
+     * @return 
+     */
+    public List<Mascota> buscarMascotasPorUsuario(String id) {
+        return mascotaRepositorio.buscarMascotasPorUsuario(id);
+    }
 
     //Método para validar los atributos de una Mascota
     private void validar(String nombre, Sexo sexo) throws MascotaServiceException {
@@ -146,5 +156,6 @@ public class MascotaService {
             throw new MascotaServiceException("El sexo de la mascota no puede estar vacío.");
         }
     }
+
 
 }
